@@ -89,7 +89,7 @@
         
         .princess-text {
             position: absolute;
-            top: -220px;
+            top: -160px;
             color: #ff69b4;
             font-size: 32px;
             font-weight: bold;
@@ -108,6 +108,33 @@
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
             width: 100%;
             text-align: center;
+        }
+        
+        .fireplace-button {
+            position: absolute;
+            top: 300px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        .fireplace-button:hover {
+            transform: translateX(-50%) translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .fireplace-button:active {
+            transform: translateX(-50%) translateY(1px);
         }
         
         .leaf {
@@ -221,6 +248,95 @@
                 opacity: 1;
             }
         }
+        
+        .fireplace-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .fireplace-content {
+            position: relative;
+            width: 80%;
+            height: 80%;
+            max-width: 800px;
+            max-height: 600px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(255, 69, 0, 0.5);
+        }
+        
+        .fireplace-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .fireplace-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+        }
+        
+        .fireplace-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(218, 98, 11, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .fireplace-btn:hover {
+            transform: scale(1.1);
+            background: rgba(218, 98, 11, 1);
+        }
+        
+        .fireplace-btn svg {
+            width: 30px;
+            height: 30px;
+            fill: white;
+        }
+        
+        .close-fireplace {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .close-fireplace:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .close-fireplace svg {
+            width: 25px;
+            height: 25px;
+            fill: white;
+        }
     </style>
 </head>
 <body>
@@ -246,6 +362,31 @@
         <div class="leaf lower-leaf">
             <!-- Removed label -->
             <div class="time-display" id="second">00</div>
+        </div>
+    </div>
+    
+    <!-- Fireplace button -->
+    <button class="fireplace-button" onclick="toggleFireplace()">Şömineyi Aç</button>
+    
+    <!-- Video container for ŞÖMİNE'E.mp4 -->
+    <div class="fireplace-container" id="videoContainer">
+        <div class="fireplace-content">
+            <video class="fireplace-video" id="somineVideo" loop muted>
+                <source src="ŞÖMİNE'E.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="fireplace-controls">
+                <div class="fireplace-btn" id="videoPlayPauseBtn" onclick="toggleSomineVideo()">
+                    <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M160,24a8,8,0,0,0-8,8V224a8,8,0,0,0,16,0V32A8,8,0,0,0,160,24Zm-40,0a8,8,0,0,0-8,8V224a8,8,0,0,0,16,0V32A8,8,0,0,0,120,24Z"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="close-fireplace" onclick="closeVideo()">
+                <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M208.49,191.51a12,12,0,0,1-17,17L128,145,64.49,208.49a12,12,0,0,1-17-17L111,128,47.51,64.49a12,12,0,0,1,17-17L128,111l63.51-63.52a12,12,0,0,1,17,17L145,128Z"></path>
+                </svg>
+            </div>
         </div>
     </div>
 
@@ -288,16 +429,6 @@
             }
         }
         
-        // Navigate to stopwatch without exiting fullscreen
-        function navigateToStopwatch() {
-            // If in fullscreen, navigate without exiting
-            if (document.fullscreenElement) {
-                window.location.href = 'stopwatch.html';
-            } else {
-                window.location.href = 'stopwatch.html';
-            }
-        }
-        
         // Fullscreen functionality
         function toggleFullscreen() {
             const elem = document.documentElement;
@@ -336,6 +467,16 @@
             if (document.fullscreenElement) {
                 event.preventDefault();
                 // Do nothing - just prevent any default behavior
+            }
+        }
+        
+        // Navigate to stopwatch without exiting fullscreen
+        function navigateToStopwatch() {
+            // If in fullscreen, navigate without exiting
+            if (document.fullscreenElement) {
+                window.location.href = 'stopwatch.html';
+            } else {
+                window.location.href = 'stopwatch.html';
             }
         }
         
@@ -383,6 +524,73 @@
             lastHour = hours;
             lastMinute = minutes;
             lastSecond = seconds;
+        }
+        
+        // Toggle video display for ŞÖMİNE'E.mp4
+        function toggleFireplace() {
+            const videoContainer = document.getElementById('videoContainer');
+            const somineVideo = document.getElementById('somineVideo');
+            
+            if (videoContainer.style.display === 'flex') {
+                // Hide video
+                videoContainer.style.display = 'none';
+                somineVideo.pause();
+            } else {
+                // Show video in fullscreen
+                videoContainer.style.display = 'flex';
+                
+                // Request fullscreen for the video
+                if (somineVideo.requestFullscreen) {
+                    somineVideo.requestFullscreen();
+                } else if (somineVideo.mozRequestFullScreen) { // Firefox
+                    somineVideo.mozRequestFullScreen();
+                } else if (somineVideo.webkitRequestFullscreen) { // Chrome, Safari and Opera
+                    somineVideo.webkitRequestFullscreen();
+                } else if (somineVideo.msRequestFullscreen) { // IE/Edge
+                    somineVideo.msRequestFullscreen();
+                }
+                
+                // Play the video
+                somineVideo.play().catch(e => console.log("Video play failed:", e));
+            }
+        }
+        
+        // Toggle video play/pause
+        function toggleSomineVideo() {
+            const somineVideo = document.getElementById('somineVideo');
+            const playPauseBtn = document.getElementById('videoPlayPauseBtn');
+            
+            if (somineVideo.paused) {
+                somineVideo.play();
+                // Update button to pause icon
+                playPauseBtn.innerHTML = '<svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg"><path d="M160,24a8,8,0,0,0-8,8V224a8,8,0,0,0,16,0V32A8,8,0,0,0,160,24Zm-40,0a8,8,0,0,0-8,8V224a8,8,0,0,0,16,0V32A8,8,0,0,0,120,24Z"></path></svg>';
+            } else {
+                somineVideo.pause();
+                // Update button to play icon
+                playPauseBtn.innerHTML = '<svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg"><path d="M240,128a15.74,15.74,0,0,1-7.6,13.51L88.32,229.65a16,16,0,0,1-16.2.3A15.86,15.86,0,0,1,64,216.13V39.87a15.86,15.86,0,0,1,8.12-13.82,16,16,0,0,1,16.2.3L232.4,114.49A15.74,15.74,0,0,1,240,128Z"></path></svg>';
+            }
+        }
+        
+        // Close video
+        function closeVideo() {
+            const videoContainer = document.getElementById('videoContainer');
+            const somineVideo = document.getElementById('somineVideo');
+            
+            // Exit fullscreen if active
+            if (document.fullscreenElement) {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+            
+            videoContainer.style.display = 'none';
+            somineVideo.pause();
         }
         
         // Check for saved state when page loads
