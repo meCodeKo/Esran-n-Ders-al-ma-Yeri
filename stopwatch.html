@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kronometre</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #0f0c29;
+            background: linear-gradient(to right, #0f0c29, #302b63, #24243e);
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+        
+        /* Fullscreen button styling */
+        .fullscreen-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #3a1c71, #d76d77);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        .fullscreen-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .fullscreen-button:active {
+            transform: translateY(1px);
+        }
+        
+        /* Back button styling */
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #3a1c71, #d76d77);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        .back-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .back-button:active {
+            transform: translateY(1px);
+        }
+        
+        .stopwatch-container {
+            position: relative;
+            width: 900px;
+            height: 200px;
+            display: flex;
+            flex-direction: row;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .leaf {
+            position: relative;
+            width: 30%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .upper-leaf {
+            background: linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b);
+            z-index: 3;
+        }
+        
+        .middle-leaf {
+            background: linear-gradient(135deg, #ffaf7b, #d76d77, #3a1c71);
+            z-index: 2;
+        }
+        
+        .lower-leaf {
+            background: linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b);
+            z-index: 1;
+        }
+        
+        .time-display {
+            font-size: 60px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .colon {
+            position: relative;
+            font-size: 60px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+            z-index: 4;
+            animation: pulse 1s infinite;
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+        
+        .leaf::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 15px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .upper-leaf::before {
+            bottom: 0;
+        }
+        
+        .middle-leaf::before {
+            top: 0;
+        }
+        
+        .lower-leaf::before {
+            top: 0;
+        }
+        
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+        
+        .controls {
+            position: absolute;
+            bottom: -70px;
+            display: flex;
+            gap: 20px;
+        }
+        
+        .control-button {
+            padding: 12px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+        
+        .start-button {
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+        }
+        
+        .stop-button {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+        }
+        
+        .reset-button {
+            background: linear-gradient(135deg, #4b6cb7, #182848);
+        }
+        
+        .control-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .control-button:active {
+            transform: translateY(1px);
+        }
+        
+        .control-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .lap-times {
+            position: absolute;
+            top: -150px;
+            width: 100%;
+            max-height: 120px;
+            overflow-y: auto;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        
+        .lap-time {
+            color: white;
+            padding: 5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        
+        .lap-time:last-child {
+            border-bottom: none;
+        }
+        
+        .lap-header {
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Back button -->
+    <button class="back-button" onclick="navigateToClock()">Saat</button>
+    
+    <!-- Fullscreen button -->
+    <button class="fullscreen-button" onclick="toggleFullscreen()">Tam Ekran</button>
+    
+    <div class="stopwatch-container" onclick="handleDisplayClick(event)">
+        <div class="leaf upper-leaf">
+            <div class="time-display" id="minutes">00</div>
+        </div>
+        <div class="colon">:</div>
+        <div class="leaf middle-leaf">
+            <div class="time-display" id="seconds">00</div>
+        </div>
+        <div class="colon">:</div>
+        <div class="leaf lower-leaf">
+            <div class="time-display" id="milliseconds">00</div>
+        </div>
+        
+        <div class="controls">
+            <button class="control-button start-button" id="startBtn" onclick="startStopwatch()">Başlat</button>
+            <button class="control-button stop-button" id="stopBtn" onclick="stopStopwatch()" disabled>Durdur</button>
+            <button class="control-button reset-button" id="resetBtn" onclick="resetStopwatch()">Sıfırla</button>
+        </div>
+    </div>
+
+    <script>
+        let startTime;
+        let elapsedTime = 0;
+        let timerInterval;
+        let isRunning = false;
+        
+        const minutesElement = document.getElementById('minutes');
+        const secondsElement = document.getElementById('seconds');
+        const millisecondsElement = document.getElementById('milliseconds');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        // Fullscreen functionality
+        function toggleFullscreen() {
+            const elem = document.documentElement;
+            const button = document.querySelector('.fullscreen-button');
+            
+            if (!document.fullscreenElement) {
+                // Enter fullscreen
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.mozRequestFullScreen) { // Firefox
+                    elem.mozRequestFullScreen();
+                } else if (elem.webkitRequestFullscreen) { // Chrome, Safari and Opera
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) { // IE/Edge
+                    elem.msRequestFullscreen();
+                }
+                button.textContent = 'Tam Ekrandan Çık';
+            } else {
+                // Exit fullscreen
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.mozCancelFullScreen) { // Firefox
+                    document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) { // Chrome, Safari and Opera
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { // IE/Edge
+                    document.msExitFullscreen();
+                }
+                button.textContent = 'Tam Ekran';
+            }
+        }
+        
+        // Update button text when fullscreen changes
+        document.addEventListener('fullscreenchange', function() {
+            const button = document.querySelector('.fullscreen-button');
+            if (button) {
+                if (document.fullscreenElement) {
+                    button.textContent = 'Tam Ekrandan Çık';
+                } else {
+                    button.textContent = 'Tam Ekran';
+                }
+            }
+        });
+        
+        // Navigate to clock without exiting fullscreen
+        function navigateToClock() {
+            // If in fullscreen, navigate without exiting
+            if (document.fullscreenElement) {
+                window.location.href = 'index.html';
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+        
+        // Handle clicks on the stopwatch display (prevents exiting fullscreen)
+        function handleDisplayClick(event) {
+            // Only prevent default if we're in fullscreen mode
+            if (document.fullscreenElement) {
+                event.preventDefault();
+                // Do nothing - just prevent any default behavior
+            }
+        }
+        
+        // Load saved state when page loads
+        window.addEventListener('load', function() {
+            const savedState = localStorage.getItem('stopwatchState');
+            if (savedState) {
+                const state = JSON.parse(savedState);
+                elapsedTime = state.elapsedTime;
+                isRunning = state.isRunning;
+                
+                // Update display with saved time
+                updateDisplay();
+                
+                // Resume timer if it was running
+                if (isRunning) {
+                    startTime = Date.now() - elapsedTime;
+                    timerInterval = setInterval(updateDisplay, 10);
+                    startBtn.disabled = true;
+                    stopBtn.disabled = false;
+                } else {
+                    startBtn.disabled = false;
+                    stopBtn.disabled = true;
+                }
+            }
+        });
+        
+        // Save state before leaving the page
+        window.addEventListener('beforeunload', function() {
+            const state = {
+                elapsedTime: elapsedTime,
+                isRunning: isRunning
+            };
+            localStorage.setItem('stopwatchState', JSON.stringify(state));
+        });
+        
+        function updateDisplay() {
+            let currentTimeElapsed;
+            if (isRunning) {
+                const currentTime = Date.now();
+                currentTimeElapsed = currentTime - startTime;
+            } else {
+                currentTimeElapsed = elapsedTime;
+            }
+            
+            const minutes = Math.floor((currentTimeElapsed / 1000 / 60) % 60);
+            const seconds = Math.floor((currentTimeElapsed / 1000) % 60);
+            const milliseconds = Math.floor((currentTimeElapsed % 1000) / 10); // hundredths of seconds
+            
+            minutesElement.textContent = minutes.toString().padStart(2, '0');
+            secondsElement.textContent = seconds.toString().padStart(2, '0');
+            millisecondsElement.textContent = milliseconds.toString().padStart(2, '0');
+        }
+        
+        function startStopwatch() {
+            if (!isRunning) {
+                startTime = Date.now() - elapsedTime;
+                timerInterval = setInterval(updateDisplay, 10);
+                isRunning = true;
+                
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                
+                // Save state
+                const state = {
+                    elapsedTime: elapsedTime,
+                    isRunning: isRunning
+                };
+                localStorage.setItem('stopwatchState', JSON.stringify(state));
+            }
+        }
+        
+        function stopStopwatch() {
+            if (isRunning) {
+                clearInterval(timerInterval);
+                // Update elapsed time to current value
+                const currentTime = Date.now();
+                elapsedTime = currentTime - startTime;
+                isRunning = false;
+                
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                
+                // Update display one final time
+                updateDisplay();
+                
+                // Save state
+                const state = {
+                    elapsedTime: elapsedTime,
+                    isRunning: isRunning
+                };
+                localStorage.setItem('stopwatchState', JSON.stringify(state));
+            }
+        }
+        
+        function resetStopwatch() {
+            stopStopwatch();
+            elapsedTime = 0;
+            
+            minutesElement.textContent = '00';
+            secondsElement.textContent = '00';
+            millisecondsElement.textContent = '00';
+            
+            // Clear saved state
+            localStorage.removeItem('stopwatchState');
+        }
+        
+        // Add keyboard support
+        document.addEventListener('keydown', function(event) {
+            if (event.code === 'Space') {
+                if (isRunning) {
+                    stopStopwatch();
+                } else {
+                    startStopwatch();
+                }
+                event.preventDefault();
+            }
+        });
+        
+        function handleDisplayClick(event) {
+            if (event.target.classList.contains('stopwatch-container')) {
+                if (isRunning) {
+                    stopStopwatch();
+                } else {
+                    startStopwatch();
+                }
+            }
+        }
+    </script>
+</body>
+</html>

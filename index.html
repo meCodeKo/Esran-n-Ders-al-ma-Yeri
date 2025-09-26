@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gelişmiş Yaprak Saat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #0f0c29;
+            background: linear-gradient(to right, #0f0c29, #302b63, #24243e);
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+        
+        /* Fullscreen button styling */
+        .fullscreen-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #3a1c71, #d76d77);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        .fullscreen-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .fullscreen-button:active {
+            transform: translateY(1px);
+        }
+        
+        /* Stopwatch button styling */
+        .stopwatch-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #3a1c71, #d76d77);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        .stopwatch-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .stopwatch-button:active {
+            transform: translateY(1px);
+        }
+        
+        .clock-container {
+            position: relative;
+            width: 900px;
+            height: 250px;
+            display: flex;
+            flex-direction: row;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .princess-text {
+            position: absolute;
+            top: -220px;
+            color: #ff69b4;
+            font-size: 32px;
+            font-weight: bold;
+            text-shadow: 0 0 15px rgba(255, 105, 180, 0.8);
+            width: 100%;
+            text-align: center;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .date-display {
+            position: absolute;
+            bottom: -50px;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+            width: 100%;
+            text-align: center;
+        }
+        
+        .leaf {
+            position: relative;
+            width: 30%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .upper-leaf {
+            background: linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b);
+            z-index: 3;
+        }
+        
+        .middle-leaf {
+            background: linear-gradient(135deg, #ffaf7b, #d76d77, #3a1c71);
+            z-index: 2;
+        }
+        
+        .lower-leaf {
+            background: linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b);
+            z-index: 1;
+        }
+        
+        .time-display {
+            font-size: 60px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .colon {
+            position: relative;
+            font-size: 60px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+            z-index: 4;
+            animation: pulse 1s infinite;
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+        
+        .leaf::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 15px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .upper-leaf::before {
+            bottom: 0;
+        }
+        
+        .middle-leaf::before {
+            top: 0;
+        }
+        
+        .lower-leaf::before {
+            top: 0;
+        }
+        
+        /* Flip animation - Changed to a more subtle fade animation */
+        .flip {
+            animation: fade 0.3s ease;
+        }
+        
+        @keyframes flip {
+            0% {
+                transform: rotateX(0deg);
+            }
+            50% {
+                transform: rotateX(-90deg);
+            }
+            100% {
+                transform: rotateX(0deg);
+            }
+        }
+        
+        @keyframes fade {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+        
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Stopwatch button -->
+    <button class="stopwatch-button" onclick="navigateToStopwatch()">Kronometre</button>
+    
+    <!-- Fullscreen button -->
+    <button class="fullscreen-button" onclick="toggleFullscreen()">Tam Ekran</button>
+    
+    <div class="clock-container" onclick="handleDisplayClick(event)">
+        <div class="princess-text">Ben Bir Prensesim 💝</div>
+        <div class="date-display" id="date">01 Ocak 2023 Pazar</div>
+        <div class="leaf upper-leaf">
+            <!-- Removed label -->
+            <div class="time-display" id="hour">00</div>
+        </div>
+        <div class="colon">:</div>
+        <div class="leaf middle-leaf">
+            <!-- Removed label -->
+            <div class="time-display" id="minute">00</div>
+        </div>
+        <div class="colon">:</div>
+        <div class="leaf lower-leaf">
+            <!-- Removed label -->
+            <div class="time-display" id="second">00</div>
+        </div>
+    </div>
+
+    <script>
+        let lastHour = '';
+        let lastMinute = '';
+        let lastSecond = '';
+        
+        // Turkish months and days
+        const turkishMonths = [
+            'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+            'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'
+        ];
+        
+        const turkishDays = [
+            'Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'
+        ];
+        
+        // Update date display
+        function updateDate() {
+            const now = new Date();
+            const day = now.getDate();
+            const month = turkishMonths[now.getMonth()];
+            const year = now.getFullYear();
+            const dayOfWeek = turkishDays[now.getDay()];
+            
+            const dateElement = document.getElementById('date');
+            dateElement.textContent = `${day} ${month} ${year} ${dayOfWeek}`;
+        }
+        
+        // Check if there's a saved stopwatch state
+        function checkStopwatchState() {
+            const savedState = localStorage.getItem('stopwatchState');
+            if (savedState) {
+                // Change button text to indicate there's a saved state
+                const stopwatchButton = document.querySelector('.stopwatch-button');
+                if (stopwatchButton) {
+                    stopwatchButton.textContent = 'Kronometre (Devam)';
+                }
+            }
+        }
+        
+        // Navigate to stopwatch without exiting fullscreen
+        function navigateToStopwatch() {
+            // If in fullscreen, navigate without exiting
+            if (document.fullscreenElement) {
+                window.location.href = 'stopwatch.html';
+            } else {
+                window.location.href = 'stopwatch.html';
+            }
+        }
+        
+        // Fullscreen functionality
+        function toggleFullscreen() {
+            const elem = document.documentElement;
+            const button = document.querySelector('.fullscreen-button');
+            
+            if (!document.fullscreenElement) {
+                // Enter fullscreen
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.mozRequestFullScreen) { // Firefox
+                    elem.mozRequestFullScreen();
+                } else if (elem.webkitRequestFullscreen) { // Chrome, Safari and Opera
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) { // IE/Edge
+                    elem.msRequestFullscreen();
+                }
+                button.textContent = 'Tam Ekrandan Çık';
+            } else {
+                // Exit fullscreen
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.mozCancelFullScreen) { // Firefox
+                    document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) { // Chrome, Safari and Opera
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { // IE/Edge
+                    document.msExitFullscreen();
+                }
+                button.textContent = 'Tam Ekran';
+            }
+        }
+        
+        // Handle clicks on the clock display (prevents exiting fullscreen)
+        function handleDisplayClick(event) {
+            // Only prevent default if we're in fullscreen mode
+            if (document.fullscreenElement) {
+                event.preventDefault();
+                // Do nothing - just prevent any default behavior
+            }
+        }
+        
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            
+            const hourElement = document.getElementById('hour');
+            const minuteElement = document.getElementById('minute');
+            const secondElement = document.getElementById('second');
+            
+            // Add fade animation when time changes
+            if (hours !== lastHour) {
+                hourElement.parentElement.classList.add('flip');
+                setTimeout(() => {
+                    hourElement.textContent = hours;
+                    hourElement.parentElement.classList.remove('flip');
+                }, 150);
+            } else {
+                hourElement.textContent = hours;
+            }
+            
+            if (minutes !== lastMinute) {
+                minuteElement.parentElement.classList.add('flip');
+                setTimeout(() => {
+                    minuteElement.textContent = minutes;
+                    minuteElement.parentElement.classList.remove('flip');
+                }, 150);
+            } else {
+                minuteElement.textContent = minutes;
+            }
+            
+            if (seconds !== lastSecond) {
+                secondElement.parentElement.classList.add('flip');
+                setTimeout(() => {
+                    secondElement.textContent = seconds;
+                    secondElement.parentElement.classList.remove('flip');
+                }, 150);
+            } else {
+                secondElement.textContent = seconds;
+            }
+            
+            lastHour = hours;
+            lastMinute = minutes;
+            lastSecond = seconds;
+        }
+        
+        // Check for saved state when page loads
+        window.addEventListener('load', function() {
+            updateDate();
+            checkStopwatchState();
+        });
+        
+        // Initial update
+        updateClock();
+        
+        // Update every second
+        setInterval(updateClock, 1000);
+    </script>
+</body>
+</html>
