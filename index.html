@@ -766,6 +766,34 @@
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
+
+        /* When the page has the small toggle button, lift the player to avoid overlap */
+        .music-player.lifted {
+            bottom: 100px; /* move up so the larger toggle button doesn't overlap */
+        }
+
+        /* Floating music toggle button (bottom-right) - larger */
+        .music-toggle-btn {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 70px;
+            height: 70px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #3a1c71, #d76d77);
+            box-shadow: 0 12px 36px rgba(0,0,0,0.5);
+            border: none;
+            cursor: pointer;
+            z-index: 300;
+            transition: transform 0.12s ease, opacity 0.12s ease;
+        }
+
+        .music-toggle-btn:hover { transform: translateY(-2px); }
+
+    .music-toggle-btn img { width: 50px; height: 50px; display: block; }
         
         .music-player-header {
             display: flex;
@@ -856,10 +884,10 @@
             transform: scale(1.1);
         }
         
-        .music-control-btn svg {
+        .music-control-btn img {
             width: 20px;
             height: 20px;
-            fill: white;
+            display: block;
         }
         
         .music-player-progress {
@@ -1092,7 +1120,7 @@
     </div>
 
     <!-- Music Player -->
-    <div class="music-player" id="musicPlayer">
+    <div class="music-player" id="musicPlayer" style="display: none;">
         <div class="music-player-header">
             <div class="music-player-title">Müzik Çalar</div>
             <div class="close-music-player" onclick="toggleMusicPlayer()">
@@ -1109,36 +1137,34 @@
         </div>
         <div class="music-player-controls">
             <div class="music-control-btn" id="musicPreviousBtn" onclick="playPreviousTrack()">
-                <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M200,40V216a8,8,0,0,1-16,0V131.31L97.38,196.6a8,8,0,0,1-8.12.3A8,8,0,0,1,80,192V64a8,8,0,0,1,9.26-7.91,8,8,0,0,1,8.12.3L184,122.69V40a8,8,0,0,1,16,0ZM48,40V216a8,8,0,0,0,16,0V40a8,8,0,0,0-16,0Z"></path>
-                </svg>
+                <img src="ıcon/back.png" alt="Önceki" width="24" height="24" />
             </div>
             <div class="music-control-btn" id="musicPlayPauseBtn" onclick="toggleMusicPlayPause()">
-                <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" id="playIcon">
-                    <path d="M240,128a15.74,15.74,0,0,1-7.6,13.51L88.32,229.65a16,16,0,0,1-16.2.3A15.86,15.86,0,0,1,64,216.13V39.87a15.86,15.86,0,0,1,8.12-13.82,16,16,0,0,1,16.2.3L232.4,114.49A15.74,15.74,0,0,1,240,128Z"></path>
-                </svg>
-                <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" id="pauseIcon" style="display: none;">
-                    <path d="M160,24a8,8,0,0,0-8,8V224a8,8,0,0,0,16,0V32A8,8,0,0,0,160,24Zm-40,0a8,8,0,0,0-8,8V224a8,8,0,0,0,16,0V32A8,8,0,0,0,120,24Z"></path>
-                </svg>
+                <img src="ıcon/play.png" id="playImg" alt="Oynat" width="28" height="28" />
+                <img src="ıcon/pause.png" id="pauseImg" alt="Duraklat" width="28" height="28" style="display:none;" />
             </div>
             <div class="music-control-btn" id="musicNextBtn" onclick="playNextTrack()">
-                <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M208,40V216a8,8,0,0,1-13.26,6,8,8,0,0,1-3-.3L104,155.31V216a8,8,0,0,1-16,0V40a8,8,0,0,1,16,0v80.69l87.74-66.32a8,8,0,0,1,9.26,12.32ZM56,40V216a8,8,0,0,0,16,0V40a8,8,0,0,0-16,0Z"></path>
-                </svg>
+                <img src="ıcon/next-button.png" alt="Sonraki" width="24" height="24" />
             </div>
         </div>
     </div>
+
+    <!-- Floating music toggle button (30x30) -->
+    <button class="music-toggle-btn" id="musicToggleBtn" aria-label="Müzik Çalar" title="Müzik Çalar" onclick="toggleMusicPlayer()">
+        <img src="ıcon/music-equipment.png" alt="Müzik" width="18" height="18" />
+    </button>
     
     <script>
         let lastHour = '';
         let lastMinute = '';
         let lastSecond = '';
         
-        // Music player variables
-        let musicPlayer = null;
-        let musicPlayerTracks = [];
-        let currentTrackIndex = -1;
-        let isMusicPlayerOpen = true;
+    // Music player variables
+    let musicPlayer = null;
+    let musicPlayerTracks = [];
+    let currentTrackIndex = -1;
+    // Start closed by default; the floating 30x30 button will open it
+    let isMusicPlayerOpen = false;
         
         // Turkish months and days
         const turkishMonths = [
@@ -1674,8 +1700,24 @@
         // Toggle music player visibility
         function toggleMusicPlayer() {
             const player = document.getElementById('musicPlayer');
+            const toggleBtn = document.getElementById('musicToggleBtn');
             isMusicPlayerOpen = !isMusicPlayerOpen;
             player.style.display = isMusicPlayerOpen ? 'flex' : 'none';
+            if (isMusicPlayerOpen) {
+                player.classList.add('lifted');
+            } else {
+                player.classList.remove('lifted');
+            }
+            // simple visual feedback on the small button
+            if (toggleBtn) {
+                toggleBtn.style.transform = isMusicPlayerOpen ? 'scale(0.90)' : 'none';
+                toggleBtn.setAttribute('aria-pressed', isMusicPlayerOpen ? 'true' : 'false');
+            }
+            // If opening, focus the first track for keyboard users
+            if (isMusicPlayerOpen) {
+                const firstTrack = document.querySelector('.music-track');
+                if (firstTrack) firstTrack.focus?.();
+            }
         }
         
         // Initialize music player
@@ -1781,15 +1823,15 @@
         
         // Update music play/pause button icon
         function updateMusicPlayPauseButton() {
-            const playIcon = document.getElementById('playIcon');
-            const pauseIcon = document.getElementById('pauseIcon');
-            
+            const playImg = document.getElementById('playImg');
+            const pauseImg = document.getElementById('pauseImg');
+
             if (musicPlayer && !musicPlayer.paused) {
-                playIcon.style.display = 'none';
-                pauseIcon.style.display = 'block';
+                if (playImg) playImg.style.display = 'none';
+                if (pauseImg) pauseImg.style.display = 'block';
             } else {
-                playIcon.style.display = 'block';
-                pauseIcon.style.display = 'none';
+                if (playImg) playImg.style.display = 'block';
+                if (pauseImg) pauseImg.style.display = 'none';
             }
         }
         
