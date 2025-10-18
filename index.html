@@ -747,6 +747,154 @@
             fill: white;
         }
         
+        /* Music player styles */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 380px;
+            height: 380px;
+            background: rgba(255, 255, 255, 0.1);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .music-player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .music-player-title {
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .close-music-player {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .close-music-player:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .music-player-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .music-track {
+            padding: 12px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .music-track:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .music-track.playing {
+            background: rgba(58, 28, 113, 0.7);
+            box-shadow: 0 0 15px rgba(58, 28, 113, 0.5);
+        }
+        
+        .music-track-icon {
+            margin-right: 10px;
+            font-size: 16px;
+        }
+        
+        .music-player-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px 0;
+            gap: 20px;
+        }
+        
+        .music-control-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            outline: none;
+        }
+        
+        .music-control-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+        
+        .music-control-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+        
+        .music-player-progress {
+            height: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .music-player-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #3a1c71, #d76d77, #ffaf7b);
+            width: 0%;
+        }
+        
+        /* Scrollbar styling */
+        .music-player-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .music-player-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        .music-player-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+        
+        .music-player-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
         /* Fullscreen time display */
         .fullscreen-time-display {
             position: fixed;
@@ -943,10 +1091,54 @@
         </div>
     </div>
 
+    <!-- Music Player -->
+    <div class="music-player" id="musicPlayer">
+        <div class="music-player-header">
+            <div class="music-player-title">Müzik Çalar</div>
+            <div class="close-music-player" onclick="toggleMusicPlayer()">
+                <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M208.49,191.51a12,12,0,0,1-17,17L128,145,64.49,208.49a12,12,0,0,1-17-17L111,128,47.51,64.49a12,12,0,0,1,17-17L128,111l63.51-63.52a12,12,0,0,1,17,17L145,128Z"></path>
+                </svg>
+            </div>
+        </div>
+        <div class="music-player-content" id="musicPlayerContent">
+            <!-- Music tracks will be added here by JavaScript -->
+        </div>
+        <div class="music-player-progress">
+            <div class="music-player-progress-bar" id="musicPlayerProgressBar"></div>
+        </div>
+        <div class="music-player-controls">
+            <div class="music-control-btn" id="musicPreviousBtn" onclick="playPreviousTrack()">
+                <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M200,40V216a8,8,0,0,1-16,0V131.31L97.38,196.6a8,8,0,0,1-8.12.3A8,8,0,0,1,80,192V64a8,8,0,0,1,9.26-7.91,8,8,0,0,1,8.12.3L184,122.69V40a8,8,0,0,1,16,0ZM48,40V216a8,8,0,0,0,16,0V40a8,8,0,0,0-16,0Z"></path>
+                </svg>
+            </div>
+            <div class="music-control-btn" id="musicPlayPauseBtn" onclick="toggleMusicPlayPause()">
+                <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" id="playIcon">
+                    <path d="M240,128a15.74,15.74,0,0,1-7.6,13.51L88.32,229.65a16,16,0,0,1-16.2.3A15.86,15.86,0,0,1,64,216.13V39.87a15.86,15.86,0,0,1,8.12-13.82,16,16,0,0,1,16.2.3L232.4,114.49A15.74,15.74,0,0,1,240,128Z"></path>
+                </svg>
+                <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" id="pauseIcon" style="display: none;">
+                    <path d="M160,24a8,8,0,0,0-8,8V224a8,8,0,0,0,16,0V32A8,8,0,0,0,160,24Zm-40,0a8,8,0,0,0-8,8V224a8,8,0,0,0,16,0V32A8,8,0,0,0,120,24Z"></path>
+                </svg>
+            </div>
+            <div class="music-control-btn" id="musicNextBtn" onclick="playNextTrack()">
+                <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M208,40V216a8,8,0,0,1-13.26,6,8,8,0,0,1-3-.3L104,155.31V216a8,8,0,0,1-16,0V40a8,8,0,0,1,16,0v80.69l87.74-66.32a8,8,0,0,1,9.26,12.32ZM56,40V216a8,8,0,0,0,16,0V40a8,8,0,0,0-16,0Z"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
+    
     <script>
         let lastHour = '';
         let lastMinute = '';
         let lastSecond = '';
+        
+        // Music player variables
+        let musicPlayer = null;
+        let musicPlayerTracks = [];
+        let currentTrackIndex = -1;
+        let isMusicPlayerOpen = true;
         
         // Turkish months and days
         const turkishMonths = [
@@ -1080,19 +1272,6 @@
                 // Show video
                 oceanContainer.style.display = 'flex';
                 oceanVideo.play().catch(e => console.log("Video play failed:", e));
-                
-                // Request fullscreen for the video
-                setTimeout(() => {
-                    if (oceanVideo.requestFullscreen) {
-                        oceanVideo.requestFullscreen();
-                    } else if (oceanVideo.mozRequestFullScreen) { // Firefox
-                        oceanVideo.mozRequestFullScreen();
-                    } else if (oceanVideo.webkitRequestFullscreen) { // Chrome, Safari and Opera
-                        oceanVideo.webkitRequestFullscreen();
-                    } else if (oceanVideo.msRequestFullscreen) { // IE/Edge
-                        oceanVideo.msRequestFullscreen();
-                    }
-                }, 100);
             }
         }
         
@@ -1492,6 +1671,128 @@
             updateFullscreenTime(); // Update fullscreen time display if it's open
         }, 1000);
         
+        // Toggle music player visibility
+        function toggleMusicPlayer() {
+            const player = document.getElementById('musicPlayer');
+            isMusicPlayerOpen = !isMusicPlayerOpen;
+            player.style.display = isMusicPlayerOpen ? 'flex' : 'none';
+        }
+        
+        // Initialize music player
+        function initMusicPlayer() {
+            const musicTracks = [
+                { name: "Antonio Vivaldi - Dört Mevsim.mp3", file: "muzık/Antonio Vivaldi - Dört Mevsim.mp3" },
+                { name: "Franz Schubert - Senfoni No. 8 (Bitmemiş).mp3", file: "muzık/Franz Schubert - Senfoni No. 8 (Bitmemiş).mp3" },
+                { name: "Johann Sebastian Bach - Brandenburg Konçertoları.mp3", file: "muzık/Johann Sebastian Bach - Brandenburg Konçertoları.mp3" },
+                { name: "Ludwig van Beethoven - Senfoni No. 6 (Pastoral).mp3", file: "muzık/Ludwig van Beethoven - Senfoni No. 6 (Pastoral).mp3" },
+                { name: "Wolfgang Amadeus Mozart - Senfoni No. 40 (Sol minör).mp3", file: "muzık/Wolfgang Amadeus Mozart - Senfoni No. 40 (Sol minör).mp3" },
+                { name: "Wolfgang Amadeus Mozart - Senfoni No. 41 (Jüpiter).mp3", file: "muzık/Wolfgang Amadeus Mozart - Senfoni No. 41 (Jüpiter).mp3" }
+            ];
+            
+            const content = document.getElementById('musicPlayerContent');
+            content.innerHTML = '';
+            
+            musicTracks.forEach((track, index) => {
+                const trackElement = document.createElement('div');
+                trackElement.className = 'music-track';
+                trackElement.innerHTML = `
+                    <div class="music-track-icon">🎵</div>
+                    <div>${track.name}</div>
+                `;
+                trackElement.onclick = () => playMusicTrack(index, musicTracks);
+                content.appendChild(trackElement);
+            });
+            
+            musicPlayerTracks = musicTracks;
+        }
+        
+        // Play a music track
+        function playMusicTrack(index, tracks) {
+            // Stop current track if playing
+            if (musicPlayer) {
+                musicPlayer.pause();
+                musicPlayer.currentTime = 0;
+            }
+            
+            // Update UI to show which track is playing
+            const trackElements = document.querySelectorAll('.music-track');
+            trackElements.forEach((el, i) => {
+                if (i === index) {
+                    el.classList.add('playing');
+                } else {
+                    el.classList.remove('playing');
+                }
+            });
+            
+            // Create new audio player
+            musicPlayer = new Audio(tracks[index].file);
+            musicPlayer.play().catch(e => console.log("Music play failed:", e));
+            currentTrackIndex = index;
+            
+            // Update play/pause button
+            updateMusicPlayPauseButton();
+            
+            // Set up progress bar update
+            musicPlayer.addEventListener('timeupdate', updateMusicProgressBar);
+            
+            // When track ends, stop playing
+            musicPlayer.addEventListener('ended', () => {
+                updateMusicPlayPauseButton();
+                const trackElements = document.querySelectorAll('.music-track');
+                trackElements[currentTrackIndex].classList.remove('playing');
+            });
+        }
+        
+        // Update music progress bar
+        function updateMusicProgressBar() {
+            if (musicPlayer) {
+                const progress = (musicPlayer.currentTime / musicPlayer.duration) * 100;
+                document.getElementById('musicPlayerProgressBar').style.width = progress + '%';
+            }
+        }
+        
+        // Toggle music play/pause
+        function toggleMusicPlayPause() {
+            if (musicPlayer && currentTrackIndex >= 0) {
+                if (musicPlayer.paused) {
+                    musicPlayer.play();
+                } else {
+                    musicPlayer.pause();
+                }
+                updateMusicPlayPauseButton();
+            }
+        }
+        
+        // Play previous track
+        function playPreviousTrack() {
+            if (musicPlayerTracks.length > 0 && currentTrackIndex >= 0) {
+                const newIndex = (currentTrackIndex - 1 + musicPlayerTracks.length) % musicPlayerTracks.length;
+                playMusicTrack(newIndex, musicPlayerTracks);
+            }
+        }
+        
+        // Play next track
+        function playNextTrack() {
+            if (musicPlayerTracks.length > 0 && currentTrackIndex >= 0) {
+                const newIndex = (currentTrackIndex + 1) % musicPlayerTracks.length;
+                playMusicTrack(newIndex, musicPlayerTracks);
+            }
+        }
+        
+        // Update music play/pause button icon
+        function updateMusicPlayPauseButton() {
+            const playIcon = document.getElementById('playIcon');
+            const pauseIcon = document.getElementById('pauseIcon');
+            
+            if (musicPlayer && !musicPlayer.paused) {
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+            } else {
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
+            }
+        }
+        
         // Continuous hide/show functionality for buttons
         let hideButtonsTimeout;
         
@@ -1544,6 +1845,7 @@
             checkStopwatchState();
             initButtonVisibility();
             createParticles();
+            initMusicPlayer();
         });
         
         // Function to create floating particles
